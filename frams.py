@@ -30,7 +30,7 @@ def checkfree(size, address):
 # read value stored in fram
 def readnum(address):
     # unpack stored number at address
-    return struct.unpack('lb', fram[address:(address + 5)])[0]
+    return struct.unpack('lb', fram[address:(address + 4)])[0]
 
 # store value with 4 bytes of fram
 def writenum(x, address):
