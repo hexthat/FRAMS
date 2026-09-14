@@ -50,21 +50,33 @@ def writenum(x, address):
 # write text to address if enough space for it
 def writetext(strng, address):
     print(strng)  # print the text to be stored
-    # print how many bytes it will take
-    print('This will use', len(strng), 'bytes of space from', address, 'to', (address + len(strng)))
-    if address + len(strng) < len(fram):  # can text fit
-        if checkfree(len(strng), address):  # check if space isnt already used
-            fram[address] = bytearray(strng)  # write text to fram
-            print(bytearray(strng))  # print what was writen
+    
+    # Calculate exactly how many bytes it will take
+    string_len = len(strng)
+    end_address = address + string_len
+    
+    print('This will use', string_len, 'bytes of space from', address, 'to', end_address)
+    
+    if end_address < len(fram):  # can text fit
+        if checkfree(string_len, address):  # check if space isn't already used
+            
+            # ✅ FIX: Use slice notation to specify the start and end boundary
+            fram[address : end_address] = bytearray(strng, 'ascii')  
+            
+            print(bytearray(strng, 'ascii'))  # print what was written
     else:
         print('Not enough space at address.')
 
+
 # return text stored at address with a size of
-def readtext(size, address, text=None):
-    text = str(bytes(fram[address:(address + size)]))
-    text = text[2:-1]
+def readtext(size, address):
+    # Read the raw byte array out of the FRAM via slicing
+    raw_bytes = fram[address : address + size]
+    
+    # Cleanly decode the bytes directly into a standard text string
+    text = raw_bytes.decode('utf-8')
+    
     return text
-    del text
 
 # erase fram from address to end of size
 def erase(size, address):
