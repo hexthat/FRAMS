@@ -29,19 +29,24 @@ def checkfree(size, address):
 
 # read value stored in fram
 def readnum(address):
-    # unpack stored number at address
-    return struct.unpack('lb', fram[address:(address + 4)])[0]
+    raw_bytes = fram[address : address + 4]
+    
+    # struct.unpack always returns a tuple, so we grab index [0]
+    return struct.unpack('l', raw_bytes)[0]
 
 # store value with 4 bytes of fram
 def writenum(x, address):
-    # check if number can be stored in 4 bytes
-    if x < 394860500 and x > -394860500:
-        print(struct.pack('lb', x))  # show what number is packed as
+    # A standard 4-byte signed integer can hold numbers from -2,147,483,648 to 2,147,483,647.
+    # Your range of +/- 394,860,500 fits perfectly inside 4 bytes.
+    if -394860500 < x < 394860500:
+        packed_data = struct.pack('l', x)
+        
+        print(packed_data)  # show what number is packed as
         print('This will use 4 bytes of space from', address, 'to', (address + 4))
-        if address < len(fram) - 4:  # can packed number fit
+        
+        if address <= len(fram) - 4:  # can packed number fit
             if checkfree(4, address):
-                # write packed number at address
-                fram[address] = bytearray(struct.pack('lb', x))
+                fram[address : address + 4] = packed_data
         else:
             print('Not enough space at address.')
     else:
