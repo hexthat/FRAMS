@@ -64,8 +64,6 @@ def writetext(strng, address):
     
     if end_address < len(fram):  # can text fit
         if checkfree(string_len, address):  # check if space isn't already used
-            
-            # ✅ FIX: Use slice notation to specify the start and end boundary
             fram[address : end_address] = bytearray(strng, 'ascii')  
             
             print(bytearray(strng, 'ascii'))  # print what was written
